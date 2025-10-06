@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import Header from "@/components/header";
+import HeroSection from "@/components/hero";
+import Categories from "@/components/categories";
 
 export default function Home() {
   const [message, setMessage] = useState("");
@@ -14,6 +16,8 @@ export default function Home() {
   return (
     <main>
       <Header />
+      <HeroSection />
+      <Categories />
       <h1>Frontend con Next.js 🚀</h1>
       <p>Respuesta del backend: {message}</p>
     </main>
