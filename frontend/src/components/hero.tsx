@@ -31,7 +31,7 @@ export default function HeroSection() {
       {/* Imagen del emprendedor */}
       <div className="flex-shrink-0">
         <img
-          src="/emprendedor.png"
+          src="https://submissions.buzzly.art/IMAGE/0479de34-9fbe-4224-a4ae-3666c2a6bf14_c6bc0b71-4eb5-4a93-b999-b327bf8492de.png"
           alt="Emprendedor sonriente"
           className="w-72 h-auto rounded-lg shadow-lg"
         />

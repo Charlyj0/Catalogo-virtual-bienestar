@@ -54,7 +54,7 @@ export default function Header() {
       {/* Menú de navegación */}
       <nav className="bg-pink-950 text-white border-t border-white/10 px-6 py-3 flex gap-6 text-sm font-medium">
         <a href="/" className="hover:text-[#800000]">Inicio</a>
-        <a href="/categorias" className="hover:text-[#800000]">Categorías</a>
+        <a href="/categories" className="hover:text-[#800000]">Categorías</a>
         <a href="/artesanos" className="hover:text-[#800000]">Artesanos</a>
         <a href="/nosotros" className="hover:text-[#800000]">Sobre Nosotros</a>
         <a href="/contacto" className="hover:text-[#800000]">Contacto</a>
