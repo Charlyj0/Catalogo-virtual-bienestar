@@ -1,7 +1,7 @@
 // src/components/Footer.tsx
 export default function Footer() {
   return (
-    <footer className="bg-[#800000] text-white text-sm mt-16">
+    <footer className="bg-[#800000] text-white text-sm">
       <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
         
         {/* Branding */}

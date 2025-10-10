@@ -1,5 +1,6 @@
 // src/data/mockProducts.ts
-export const mockProducts = [
+import type { Product } from "@/lib/products-data"
+export const mockProducts: Product[] = [
   {
     id: 1,
     name: "Jarro de barro tradicional",
@@ -29,6 +30,7 @@ export const mockProducts = [
     image: "https://preview.redd.it/hwyb-firefly-from-honkai-star-rail-in-pf2e-v0-j0urvj9tcr7d1.png?auto=webp&s=05c2a91ca3ecb1586f07aea0af62f60b6bfd2516",
     price: "$520 MXN",
     originalPrice: "$600 MXN",
+    description: "Camino de mesa textil de alta calidad, perfecto para decorar cualquier mesa.",
     discount: 13,
     artisan: "Textiles Mayas",
     location: "Yucatán",

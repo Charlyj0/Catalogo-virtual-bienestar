@@ -38,7 +38,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function ArtesanosDestacados() {
   return (
-    <section className="w-full px-6 py-12 bg-[#fdfdfd]">
+    <section className="w-full px-6 py-12 ">
       <h2 className="text-2xl font-semibold text-[#800000] mb-6">Conoce a nuestros artesanos</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ">

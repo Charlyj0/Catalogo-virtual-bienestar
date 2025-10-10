@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Star } from "lucide-react";
 import { mockProducts } from "@/data/mockproduct";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ProductSection({
   onProductSelect,
@@ -15,7 +16,7 @@ export default function ProductSection({
   onProductSelect?: (id: string) => void;
 }) {
   return (
-    <section className="w-full px-6 py-12 bg-[#fdfdfd]">
+    <section className="w-full px-6 py-12">
       <h2 className="text-2xl font-semibold text-[#800000] mb-8">Nuestros productos</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -81,6 +82,7 @@ export default function ProductSection({
                       </span>
                     )}
                   </div>
+                  <Link href={`/product/${product.id}`}>
                   <Button
                     size="sm"
                     variant="outline"
@@ -88,6 +90,7 @@ export default function ProductSection({
                   >
                     Ver más
                   </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>

@@ -20,7 +20,7 @@ export default function LoginPage() {
         priority
       />
       {/* Capa oscura */}
-        <div className="absolute inset-0 bg-black/40 z-0" />
+      <div className="absolute inset-0 bg-black/40 z-0" />
 
       {/* Texto institucional izquierda */}
       <div className="absolute left-0 top-0 h-full w-full md:w-1/2 flex items-center justify-center z-10 px-6">

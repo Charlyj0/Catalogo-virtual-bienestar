@@ -19,7 +19,7 @@ export default function CategoriasGrid() {
   return (
     <>
     <Header />
-    <section className="w-full px-6 py-12 bg-white">
+    <section className="w-full px-6 py-12">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-semibold text-[#800000]">
             Categorías Artesanales
@@ -34,7 +34,7 @@ export default function CategoriasGrid() {
         {categorias.map((cat, index) => (
           <div
             key={index}
-            className="bg-white border-2 border-[#800000] rounded-xl p-6 flex flex-col items-center justify-center text-[#800000] hover:bg-[#800000] hover:text-white transition-colors cursor-pointer"
+            className=" border-2 border-[#800000] rounded-xl p-6 flex flex-col items-center justify-center text-[#800000] hover:bg-[#800000] hover:text-white transition-colors cursor-pointer"
           >
             {cat.icono}
             <span className="mt-3 text-sm font-medium">{cat.nombre}</span>

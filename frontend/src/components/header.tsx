@@ -59,6 +59,9 @@ export default function Header() {
         <a href="/nosotros" className="hover:text-[#800000]">Sobre Nosotros</a>
         <a href="/contacto" className="hover:text-[#800000]">Contacto</a>
       </nav>
+          {/* Separador decorativo institucional */}
+      <div className="w-full h-2 bg-gradient-to-r from-[#800000] via-[#cfa18c] to-[#800000]" />
     </header>
+
   );
 }
