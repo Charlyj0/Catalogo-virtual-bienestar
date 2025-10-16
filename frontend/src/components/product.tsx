@@ -74,11 +74,11 @@ export default function ProductSection({
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-xl font-semibold text-gray-900">
-                      {product.price}
+                      ${product.price}
                     </span>
                     {product.originalPrice && (
                       <span className="text-sm text-gray-500 line-through ml-2">
-                        {product.originalPrice}
+                        ${product.originalPrice}
                       </span>
                     )}
                   </div>

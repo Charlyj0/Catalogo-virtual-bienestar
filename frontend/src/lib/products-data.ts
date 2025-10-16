@@ -3,8 +3,8 @@ export type Product = {
   name: string
   image: string
   images?: string[] // opcional si no siempre hay múltiples imágenes
-  price: string
-  originalPrice?: string
+  price: number
+  originalPrice?: number
   discount?: number
   featured?: boolean
   artisan: string

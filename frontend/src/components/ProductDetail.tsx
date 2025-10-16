@@ -78,7 +78,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
             </div>
 
             <div className="flex items-baseline gap-2 mb-6">
-              <span className="text-3xl font-bold text-[#800000]">{product.price}</span>
+              <span className="text-3xl font-bold text-[#800000]">${product.price}</span>
               <span className="text-muted-foreground">MXN</span>
             </div>
           </div>
