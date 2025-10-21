@@ -15,6 +15,7 @@ import { Product } from "@/lib/products-data"
 import { mockProducts as products } from "@/data/mockproduct"
 import useAuth from "../../../hooks/useAuth"
 import ArtisanForm from "@/components/admin/artisanForm"
+import { ProductForm } from "@/components/admin/producForm"
 
 
 
@@ -115,7 +116,9 @@ export default function AdminPage() {
             </CardHeader>
             <CardContent>
               <ProductTable onEdit={handleEditProduct} />
-           
+              {showForm && (
+                <ProductForm onClose={handleCloseForm} product={editingProduct} />
+              )}
             </CardContent>
           </Card>
         </TabsContent> 
