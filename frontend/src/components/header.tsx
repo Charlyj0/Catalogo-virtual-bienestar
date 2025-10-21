@@ -1,8 +1,31 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+type Usuario = {
+  id: number;
+  nombre: string;
+  rol: string;
+};
 
 export default function Header() {
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
+  const router = useRouter();
+  
+
+  useEffect(() => {
+    const stored = localStorage.getItem("usuario");
+    if (stored) {
+      setUsuario(JSON.parse(stored));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    router.push("/login");
+  };
   return (
     <header className="w-full bg-[#fdf8f6]">
       {/* Barra superior negra */}
@@ -46,24 +69,47 @@ export default function Header() {
           </div>
 
           {/* Botón de sesión */}
-          <div className="flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-white/90"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5.121 17.804A4 4 0 0112 14h0a4 4 0 016.879 3.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
-            <Link href="/login" className="text-sm text-white/90 hover:underline">
-              Iniciar Sesión
-            </Link>
+          {/* Sesión */}
+          <div className="flex items-center gap-4">
+            {usuario ? (
+              <>
+                <span className="text-sm text-white/90">Hola, {usuario.nombre}</span>
+                {usuario.rol === "admin" && (
+                  <Link
+                    href="/admin-panel"
+                    className="text-sm bg-white text-pink-900 px-3 py-1 rounded hover:bg-pink-100"
+                  >
+                    Panel Admin
+                  </Link>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="text-sm text-white/90 hover:underline"
+                >
+                  Cerrar sesión
+                </button>
+              </>
+            ) : (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-white/90"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5.121 17.804A4 4 0 0112 14h0a4 4 0 016.879 3.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                <Link href="/login" className="text-sm text-white/90 hover:underline">
+                  Iniciar Sesión
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -13,12 +13,19 @@ import Footer from "@/components/footer"
 import { Artisan, artisans } from "@/lib/artisans-data"
 import { Product } from "@/lib/products-data"
 import { mockProducts as products } from "@/data/mockproduct"
+import useAuth from "../../../hooks/useAuth"
+import ArtisanForm from "@/components/admin/artisanForm"
+
 
 
 export default function AdminPage() {
+
+
   const [editingArtisan, setEditingArtisan] = useState<Artisan | null>(null)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [showForm, setShowForm] = useState(false)
+  const usuario = useAuth("admin")
+  if (!usuario) return null
 
   const totalArtisans = artisans.length
   const activeArtisans = artisans.filter((a) => a.verified).length
@@ -88,8 +95,12 @@ export default function AdminPage() {
                 Agregar Artesano
               </Button>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative">
+
               <ArtisanTable onEdit={handleEditArtisan} />
+              {showForm && (
+                <ArtisanForm onClose={handleCloseForm} artisan={editingArtisan} />
+              )}
             </CardContent>
           </Card>
         </TabsContent> 
@@ -104,6 +115,7 @@ export default function AdminPage() {
             </CardHeader>
             <CardContent>
               <ProductTable onEdit={handleEditProduct} />
+           
             </CardContent>
           </Card>
         </TabsContent> 

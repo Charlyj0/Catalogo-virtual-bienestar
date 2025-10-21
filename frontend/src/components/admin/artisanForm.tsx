@@ -48,7 +48,8 @@ export default function ArtisanForm({ artisan, onClose }: ArtisanFormProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+    <div className="mx-auto my-6 bg-white rounded-lg shadow-lg border w-full max-w-2xl z-40">
       <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-2xl font-bold">{artisan ? "Editar Artesano" : "Agregar Nuevo Artesano"}</h2>
@@ -243,6 +244,7 @@ export default function ArtisanForm({ artisan, onClose }: ArtisanFormProps) {
           </form>
         </div>
       </div>
+    </div>
     </div>
   )
 }

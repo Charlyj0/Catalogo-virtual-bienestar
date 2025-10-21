@@ -1,13 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
 import FloatingDetails from "@/components/floatingdetails";
-import { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 
 
@@ -39,9 +39,9 @@ export default function LoginPage() {
 
       // Redirigir según rol
       if (data.usuario.rol === "admin") {
-        router.push("/admin")
+        router.push("/")
       } else {
-        router.push("/catalogo")
+        router.push("/")
       }
     } catch (err) {
       setError("Error de conexión con el servidor")
