@@ -30,7 +30,7 @@ export default function CategoriasMarquee() {
           {[...categorias, ...categorias].map((cat, index) => (
             <div
               key={index}
-              className="min-w-[250px] h-[200px] bg-[#fdf8f6] border-2 border-[#800000] rounded-xl p-8 flex flex-col items-center justify-center text-[#800000] hover:bg-[#800000] hover:text-white transition-colors cursor-pointer"
+              className="min-w-[250px] h-[200px] bg-[#fdf8f6] border-2 border-[#e0e0e0] rounded-xl p-8 flex flex-col items-center justify-center text-[#800000] hover:bg-[#e0e0e0] hover:text-white transition-colors cursor-pointer"
             >
               {cat.icono}
               <span className="mt-4 text-base font-semibold">{cat.nombre}</span>

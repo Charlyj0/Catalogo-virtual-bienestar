@@ -1,250 +1,239 @@
 "use client"
-
-import type React from "react"
-
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useEffect } from "react"
+import axios from "axios"
 import { X } from "lucide-react"
-import type { Artisan } from "@/lib/artisans-data"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import PersonalInfo from "./personalInfo"
+import ComercialInfo from "./comercialinfo"
+import ExtraInfo from "./extraInfo"
+import HistoriaInfo from "./historialinfo"
+import StatusInfo from "./statusinfo"
+import ArtisanFormContacto from "@/components/artisanFormContacto"
+import ArtisanFormRedes from "@/components/artisanFormRedes"
+import toast from "react-hot-toast"
 
-interface ArtisanFormProps {
-  artisan?: Artisan | null
-  onClose: () => void
+interface ArtisanFormData {
+  [key: string]: any
+  nombres: string
+  primer_apellido: string
+  segundo_apellido: string
+  nombre_comercial: string
+  edad: string
+  genero: string
+  cumpleaños: string
+  sm: string
+  discapacidad: string
+  mobiliario: string
+  activo: boolean
+  destacado: boolean
+  años_experiencia: number
+  especialidad: string
+  ubicacion: string
+  descripcion: string
+  historia: string
+  celular: string
+  correo: string
+  direccion: string
+  instagram: string
+  facebook: string
+  whatsapp: string
+  categoria_id: string | null
+  imagen: string | File | null
 }
 
-export default function ArtisanForm({ artisan, onClose }: ArtisanFormProps) {
-  const [formData, setFormData] = useState({
-    name: artisan?.name || "",
-    specialty: artisan?.specialty || "",
-    location: artisan?.location || "",
-    description: artisan?.description || "",
-    story: artisan?.story || "",
-    phone: artisan?.contactInfo.phone || "",
-    email: artisan?.contactInfo.email || "",
-    address: artisan?.contactInfo.address || "",
-    instagram: artisan?.socialMedia?.instagram || "",
-    facebook: artisan?.socialMedia?.facebook || "",
-    whatsapp: artisan?.socialMedia?.whatsapp || "",
-    verified: artisan?.verified || false,
-    featured: artisan?.featured || false,
-    yearsExperience: artisan?.yearsExperience || 0,
+interface ArtisanFormArtesanoProps {
+  artisan?: any
+  onClose: () => void
+  onSaved?: () => void
+}
+
+export default function ArtisanFormArtesano({
+  onClose,
+  artisan,
+  onSaved,
+}: ArtisanFormArtesanoProps) {
+  // Inicializamos todos los campos con valores seguros
+  const [formData, setFormData] = useState<ArtisanFormData>({
+    nombres: artisan?.nombres || "",
+    primer_apellido: artisan?.primer_apellido || "",
+    segundo_apellido: artisan?.segundo_apellido || "",
+    nombre_comercial: artisan?.nombre_comercial || "",
+    edad: artisan?.edad || "",
+    genero: artisan?.genero ? artisan.genero.toLowerCase() : "",
+    cumpleaños: artisan?.cumpleaños
+      ? artisan.cumpleaños.split("T")[0]
+      : "",
+    sm: artisan?.sm || "",
+    discapacidad: artisan?.discapacidad ? artisan.discapacidad.toLowerCase() : "",
+    mobiliario: artisan?.mobiliario === 1 ? "sí" : "no",
+    activo: artisan?.activo === 1,
+    destacado: artisan?.destacado === 1,
+    años_experiencia: artisan?.años_experiencia || 0,
+    especialidad: artisan?.especialidad || "",
+    ubicacion: artisan?.ubicacion || "",
+    descripcion: artisan?.descripcion || "",
+    historia: artisan?.historia || "",
+    celular: artisan?.contacto?.celular || "",
+    correo: artisan?.contacto?.correo || "",
+    direccion: artisan?.contacto?.direccion || "",
+    instagram: artisan?.redes?.instagram || "",
+    facebook: artisan?.redes?.facebook || "",
+    whatsapp: artisan?.redes?.whatsapp || "",
+    imagen: artisan?.imagen || null, // campo para la imagen
+    categoria_id: artisan?.categoria_id ? String(artisan.categoria_id) : "",
   })
+
+  // 👇 este useEffect sincroniza formData cuando cambie artisan
+useEffect(() => {
+  if (artisan) {
+    setFormData({
+      nombres: artisan.nombres || "",
+      primer_apellido: artisan.primer_apellido || "",
+      segundo_apellido: artisan.segundo_apellido || "",
+      nombre_comercial: artisan.nombre_comercial || "",
+      edad: artisan.edad || "",
+      genero: artisan.genero ? artisan.genero.toLowerCase() : "",
+      cumpleaños: artisan.cumpleaños
+        ? artisan.cumpleaños.split("T")[0]
+        : "",
+      sm: artisan.sm || "",
+      discapacidad: artisan.discapacidad ? artisan.discapacidad.toLowerCase() : "",
+      mobiliario: artisan.mobiliario === 1 ? "sí" : "no", // 👈 string en vez de boolean
+      activo: artisan.activo === 1,
+      destacado: artisan.destacado === 1,
+      años_experiencia: artisan.años_experiencia || 0,
+      especialidad: artisan.especialidad || "",
+      ubicacion: artisan.ubicacion || "",
+      descripcion: artisan.descripcion || "",
+      historia: artisan.historia || "",
+      celular: artisan.contacto?.celular || "",
+      correo: artisan.contacto?.correo || "",
+      direccion: artisan.contacto?.direccion || "",
+      instagram: artisan.redes?.instagram || "",
+      facebook: artisan.redes?.facebook || "",
+      whatsapp: artisan.redes?.whatsapp || "",
+      // ⚠️ si viene de BD será string (URL), si el usuario sube será File
+      imagen: artisan.imagen || null,
+       // ⚠️ asegúrate de que sea número o null
+      categoria_id: artisan.categoria_id ? String(artisan.categoria_id) : "",
+    })
+  }
+}, [artisan])
 
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Here you would implement the save logic
-    console.log("Saving artisan:", formData)
-    onClose()
+const [loading, setLoading] = useState(false)
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  if (loading) return // evita múltiples envíos
+  setLoading(true)
+
+  try {
+    let imageUrl: string | null = null
+    console.log("Artisan recibido:", artisan)
+
+
+    // Si hay archivo seleccionado
+    if (formData.imagen instanceof File) {
+      const data = new FormData()
+      data.append("imagen", formData.imagen)
+
+      const res = await axios.post("/api/upload", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+
+      imageUrl = res.data.url
+    }
+
+    const payload = {
+  ...formData,
+  imagen: imageUrl ?? (typeof formData.imagen === "string" ? formData.imagen : null),
+  activo: formData.activo ? 1 : 0,
+  destacado: formData.destacado ? 1 : 0,
+  contacto: {
+    celular: formData.celular,
+    correo: formData.correo,
+    direccion: formData.direccion,
+  },
+  redes: {
+    instagram: formData.instagram,
+    facebook: formData.facebook,
+    whatsapp: formData.whatsapp,
+  },
+}
+
+    if (artisan?.id) {
+      await axios.put(`/api/artesanos/${artisan.id}`, payload)
+      toast.success("Artesano actualizado correctamente")
+    } else {
+      await axios.post("/api/artesanos", payload)
+      toast.success("Artesano agregado correctamente")
+    }
+
+    onSaved?.() // refresca la lista si existe
+    onClose()   // cierra el modal
+  } catch (err) {
+    console.error("Error guardando artesano:", err)
+    toast.error("Hubo un error al guardar el artesano")
+  } finally {
+    setLoading(false) // libera el flag al terminar
   }
+}
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-    <div className="mx-auto my-6 bg-white rounded-lg shadow-lg border w-full max-w-2xl z-40">
-      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-2xl font-bold">{artisan ? "Editar Artesano" : "Agregar Nuevo Artesano"}</h2>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="w-4 h-4" />
-          </Button>
-        </div>
+    <div className="relative">
+      {/* Botón de cerrar */}
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+      >
+        <X className="w-6 h-6" />
+      </button>
 
-        <div className="overflow-y-auto max-h-[calc(90vh-140px)]">
-          <form onSubmit={handleSubmit} className="p-6">
-            <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="basic">Información Básica</TabsTrigger>
-                <TabsTrigger value="contact">Contacto y Redes</TabsTrigger>
-                <TabsTrigger value="documents">Documentos</TabsTrigger>
-              </TabsList>
+      {/* Quitamos overflow-y-auto aquí */}
+      <form onSubmit={handleSubmit} className="p-6">
+        <Tabs defaultValue="basic" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="basic">Artesano</TabsTrigger>
+            <TabsTrigger value="contact">Contacto</TabsTrigger>
+            <TabsTrigger value="social">Redes</TabsTrigger>
+          </TabsList>
 
-              <TabsContent value="basic" className="space-y-6 mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Nombre *</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange("name", e.target.value)}
-                      required
-                    />
-                  </div>
+          {/* Sección Artesano */}
+          <TabsContent value="basic">
+            <PersonalInfo formData={formData} handleInputChange={handleInputChange} />
+            <ComercialInfo formData={formData} handleInputChange={handleInputChange} />
+            <ExtraInfo formData={formData} handleInputChange={handleInputChange} />
+            <HistoriaInfo formData={formData} handleInputChange={handleInputChange} />
+            <StatusInfo formData={formData} handleInputChange={handleInputChange} />
+          </TabsContent>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="specialty">Especialidad *</Label>
-                    <Input
-                      id="specialty"
-                      value={formData.specialty}
-                      onChange={(e) => handleInputChange("specialty", e.target.value)}
-                      required
-                    />
-                  </div>
+          {/* Sección Contacto */}
+          <TabsContent value="contact">
+            <ArtisanFormContacto formData={formData} handleInputChange={handleInputChange} />
+          </TabsContent>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="location">Ubicación *</Label>
-                    <Input
-                      id="location"
-                      value={formData.location}
-                      onChange={(e) => handleInputChange("location", e.target.value)}
-                      required
-                    />
-                  </div>
+          {/* Sección Redes */}
+          <TabsContent value="social">
+            <ArtisanFormRedes formData={formData} handleInputChange={handleInputChange} />
+          </TabsContent>
+        </Tabs>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="yearsExperience">Años de Experiencia</Label>
-                    <Input
-                      id="yearsExperience"
-                      type="number"
-                      value={formData.yearsExperience}
-                      onChange={(e) => handleInputChange("yearsExperience", Number.parseInt(e.target.value) || 0)}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Descripción Corta</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => handleInputChange("description", e.target.value)}
-                    rows={3}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="story">Historia del Artesano</Label>
-                  <Textarea
-                    id="story"
-                    value={formData.story}
-                    onChange={(e) => handleInputChange("story", e.target.value)}
-                    rows={5}
-                  />
-                </div>
-
-                <div className="flex items-center space-x-6">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="verified"
-                      checked={formData.verified}
-                      onCheckedChange={(checked) => handleInputChange("verified", checked)}
-                    />
-                    <Label htmlFor="verified">Activo</Label>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="featured"
-                      checked={formData.featured}
-                      onCheckedChange={(checked) => handleInputChange("featured", checked)}
-                    />
-                    <Label htmlFor="featured">Destacado</Label>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="contact" className="space-y-6 mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Información de Contacto</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Teléfono *</Label>
-                        <Input
-                          id="phone"
-                          value={formData.phone}
-                          onChange={(e) => handleInputChange("phone", e.target.value)}
-                          required
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Correo Electrónico *</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => handleInputChange("email", e.target.value)}
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="address">Dirección</Label>
-                      <Textarea
-                        id="address"
-                        value={formData.address}
-                        onChange={(e) => handleInputChange("address", e.target.value)}
-                        rows={2}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Redes Sociales</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="instagram">Instagram</Label>
-                        <Input
-                          id="instagram"
-                          value={formData.instagram}
-                          onChange={(e) => handleInputChange("instagram", e.target.value)}
-                          placeholder="@usuario"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="facebook">Facebook</Label>
-                        <Input
-                          id="facebook"
-                          value={formData.facebook}
-                          onChange={(e) => handleInputChange("facebook", e.target.value)}
-                          placeholder="Nombre de página"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="whatsapp">WhatsApp</Label>
-                        <Input
-                          id="whatsapp"
-                          value={formData.whatsapp}
-                          onChange={(e) => handleInputChange("whatsapp", e.target.value)}
-                          placeholder="+57 300 123 4567"
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-
-            <div className="flex justify-end space-x-4 mt-8 pt-6 border-t">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancelar
-              </Button>
-              <Button type="submit" className="bg-green-600 hover:bg-green-700">
-                {artisan ? "Actualizar" : "Guardar"} Artesano
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+        {/* Botón de envío */}
+        <button
+          type="submit"
+          className={`mt-6 px-4 py-2 rounded transition ${
+            loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"
+          }`}
+        >
+          {loading ? "Guardando..." : "Guardar Artesano"}
+        </button>
+      </form>
     </div>
   )
 }

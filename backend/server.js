@@ -4,6 +4,14 @@ import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import cors from "cors"
 import artesanosRouter from "./routes/artesanos.js"
+import uploadRouter from "./routes/upload.js"
+import productosRouter from "./routes/productos.js"
+import categoriasRouter from "./routes/categorias.js"
+import usuariosRouter from "./routes/usuarios.js"
+import etiquetasRouter from "./routes/etiquetas.js"
+import statsRouter from "./routes/stats.js"
+import reportsRouter from "./routes/reports.js"
+
 import dotenv from "dotenv"
 dotenv.config()
 
@@ -12,7 +20,16 @@ dotenv.config()
 const app = express()
 app.use(express.json())
 app.use(cors())
+
+app.use("/api/upload", uploadRouter)
 app.use("/api/artesanos", artesanosRouter)
+// Rutas públicas
+app.use("/api/productos", productosRouter) // GET abierto
+app.use("/api/categorias", categoriasRouter)
+app.use("/api/usuarios", usuariosRouter)
+app.use("/api/etiquetas", etiquetasRouter)
+app.use("/api/stats", statsRouter) // estadísticas
+app.use("/api/reports", reportsRouter) // reportes
 
 
 const SECRET = process.env.JWT_SECRET

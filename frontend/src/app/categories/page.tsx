@@ -19,6 +19,7 @@ export default function CategoriasGrid() {
   return (
     <>
     <Header />
+    <main className="pt-[160px]">
     <section className="w-full px-6 py-12">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-semibold text-[#800000]">
@@ -42,6 +43,7 @@ export default function CategoriasGrid() {
         ))}
       </div>
     </section>
+    </main>
     <Footer />
     </>
   );

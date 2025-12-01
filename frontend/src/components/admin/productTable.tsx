@@ -1,128 +1,143 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
+import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Edit, Trash2, MoreHorizontal, Search, AlertTriangle } from "lucide-react"
-import { mockProducts } from "@/data/mockproduct"
-import type { Product } from "@/lib/products-data"
-import { formatCurrency } from "@/lib/utils"
+import { Edit, Trash2, MoreHorizontal, Search } from "lucide-react"
+import toast from "react-hot-toast"
 
-interface ProductTableProps {
-  onEdit: (product: Product) => void
+interface Producto {
+  id: number
+  titulo: string
+  descripcion: string
+  precio_aproximado: string
+  publicado: boolean
+  destacado: boolean
+  creado_en: string
+  artesano_id: number
+  imagen_destacada?: string | null   // 👈 nuevo campo
 }
 
-export default function ProductTable({ onEdit }: ProductTableProps) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
+interface ProductoTableProps {
+  onEdit: (producto: Producto) => void
+}
 
-  const categories = useMemo(() => ["all", ...new Set(mockProducts.map((p) => p.category))], [])
+export default function ProductoTable({ onEdit }: ProductoTableProps) {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [productos, setProductos] = useState<Producto[]>([])
+  const [filteredProductos, setFilteredProductos] = useState<Producto[]>([])
 
   useEffect(() => {
-    const filtered = mockProducts.filter((product) => {
-      const matchesSearch =
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.artisan.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (product.category && product.category.toLowerCase().includes(searchTerm.toLowerCase()))
+    const fetchProductos = async () => {
+  try {
+    const token = localStorage.getItem("token") // o desde tu hook useAuth
+    const res = await axios.get("/api/productos")
+    const data: Producto[] = Array.isArray(res.data.productos) ? res.data.productos : []
+    setProductos(data)
+    setFilteredProductos(data)
+  } catch (err) {
+    console.error("Error cargando productos:", err)
+    toast.error("No se pudieron cargar los productos")
+  }
+}
+    fetchProductos()
+  }, [])
 
-      const matchesCategory = categoryFilter === "all" || product.category === categoryFilter
+  const handleSearch = (term: string) => {
+    setSearchTerm(term)
+    const filtered = productos.filter(
+      (p) =>
+        p.titulo.toLowerCase().includes(term.toLowerCase()) ||
+        (p.descripcion || "").toLowerCase().includes(term.toLowerCase())
+    )
+    setFilteredProductos(filtered)
+  }
 
-      return matchesSearch && matchesCategory
-    })
-
-    setFilteredProducts(filtered)
-  }, [searchTerm, categoryFilter])
-
-  const handleDelete = async (product: Product) => {
-    const confirmed = confirm(`¿Estás seguro de eliminar "${product.name}"?`)
-    if (!confirmed) return
-
+  const handleDelete = async (producto: Producto) => {
+  if (confirm(`¿Estás seguro de eliminar el producto "${producto.titulo}"?`)) {
     try {
-      // Aquí iría la lógica real de eliminación (API call)
-      console.log("Deleting product:", product.id)
-    } catch (error) {
-      console.error("Error deleting product:", error)
+      const token = localStorage.getItem("token")
+      if (!token) {
+        console.error("No hay token en localStorage")
+        return
+      }
+
+      await axios.delete(`/api/productos/${producto.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // 👈 formato correcto
+        }
+        // quita withCredentials si no usas cookies
+      })
+
+      setProductos((prev) => prev.filter((p) => p.id !== producto.id))
+      setFilteredProductos((prev) => prev.filter((p) => p.id !== producto.id))
+    } catch (err) {
+      console.error("Error eliminando producto:", err)
     }
   }
+}
 
   return (
     <div className="space-y-4">
-      {/* Filtros */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input
-            placeholder="Buscar por nombre, artesano o categoría..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-full sm:w-48">
-            <SelectValue placeholder="Filtrar por categoría" />
-          </SelectTrigger>
-          <SelectContent>
-            {categories.map((category) => (
-              <SelectItem key={category} value={category!}>
-                {category === "all" ? "Todas las categorías" : category}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+        <Input
+          placeholder="Buscar por título o descripción..."
+          value={searchTerm}
+          onChange={(e) => handleSearch(e.target.value)}
+          className="pl-10"
+        />
       </div>
 
-      {/* Tabla */}
-      <div className="rounded-md border overflow-x-auto">
+      {/* Table */}
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>Producto</TableHead>
-              <TableHead>Artesano</TableHead>
+              <TableHead>Descripción</TableHead>
               <TableHead>Precio</TableHead>
-              <TableHead>Stock</TableHead>
-              <TableHead>Estado</TableHead>
+              <TableHead>Publicado</TableHead>
+              <TableHead>Destacado</TableHead>
+              <TableHead>Creado en</TableHead>
               <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredProducts.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell className="font-medium">{product.id}</TableCell>
+            {filteredProductos.map((producto) => (
+              <TableRow key={producto.id}>
+                <TableCell className="font-medium">{producto.id}</TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-3">
                     <img
-                      src={product.image || "/placeholder.svg"}
-                      alt={product.name}
-                      className="w-12 h-12 rounded-lg object-cover"
+                      src={producto.imagen_destacada || "/placeholder.svg"}
+                      alt={producto.titulo}
+                      className="w-10 h-10 rounded-md object-cover border"
                     />
                     <div>
-                      <div className="font-medium">{product.name}</div>
-                      <div className="text-sm text-gray-500">{product.category}</div>
+                      <div className="font-medium">{producto.titulo}</div>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>{product.artisan}</TableCell>
-                <TableCell className="font-medium">{formatCurrency(product.price)}</TableCell>
+                <TableCell className="max-w-xs truncate">{producto.descripcion}</TableCell>
+                <TableCell>{producto.precio_aproximado}</TableCell>
                 <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <span>{product.stockQuantity}</span>
-                    {product.inStock && product.stockQuantity != null && product.stockQuantity < 5 && (
-                      <AlertTriangle className="w-4 h-4 text-orange-500" />
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge variant={product.inStock ? "default" : "secondary"}>
-                    {product.inStock ? "Activo" : "Inactivo"}
+                  <Badge variant={producto.publicado ? "default" : "secondary"}>
+                    {producto.publicado ? "Publicado" : "No publicado"}
                   </Badge>
                 </TableCell>
+                <TableCell>
+                  <Badge variant={producto.destacado ? "default" : "secondary"}>
+                    {producto.destacado ? "Destacado" : "Normal"}
+                  </Badge>
+                </TableCell>
+                <TableCell>{new Date(producto.creado_en).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -131,11 +146,11 @@ export default function ProductTable({ onEdit }: ProductTableProps) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onEdit(product)}>
+                      <DropdownMenuItem onClick={() => onEdit(producto)}>
                         <Edit className="mr-2 h-4 w-4" />
                         Editar
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDelete(product)} className="text-red-600">
+                      <DropdownMenuItem onClick={() => handleDelete(producto)} className="text-red-600">
                         <Trash2 className="mr-2 h-4 w-4" />
                         Eliminar
                       </DropdownMenuItem>
@@ -148,9 +163,9 @@ export default function ProductTable({ onEdit }: ProductTableProps) {
         </Table>
       </div>
 
-      {filteredProducts.length === 0 && (
+      {filteredProductos.length === 0 && (
         <div className="text-center py-8 text-gray-500">
-          No se encontraron productos que coincidan con los filtros aplicados.
+          No se encontraron productos que coincidan con la búsqueda.
         </div>
       )}
     </div>

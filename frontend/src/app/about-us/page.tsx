@@ -15,6 +15,7 @@ export default function NosotrosPage() {
   return (
     <>
     <Header />
+    <main className="pt-[160px]">
     <section className="bg-[#fdf8f6] min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-screen-xl mx-auto bg-white rounded-2xl shadow-lg p-10 space-y-12 animate-fadeIn">
         {/* Encabezado */}
@@ -67,6 +68,7 @@ export default function NosotrosPage() {
         </div>
       </div>
     </section>
+    </main>
     <Footer />
     </>
   )
